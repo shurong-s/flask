@@ -1,0 +1,100 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- 页面标题 -->
+    <div class="mb-8 text-center">
+        <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-secondary mb-2">
+            <i class="fa fa-pencil-square-o mr-2"></i>数据输入
+        </h2>
+        <p class="text-gray-600">请输入光缆使用数据，系统将自动计算使用数量</p>
+    </div>
+
+    <!-- 数据输入表单 -->
+    <div class="bg-white rounded-xl p-6 md:p-8 card-shadow animate-fadeIn">
+        <form method="POST" action="/calculate" class="space-y-6">
+            <!-- 项目选择 -->
+            <div class="form-group">
+                <label for="project" class="block text-gray-700 font-medium mb-2">
+                    <i class="fa fa-folder-open text-primary mr-1"></i>项目名称 <span class="text-error">*</span>
+                </label>
+                <!-- 在input.html的项目选择下拉框中添加选中逻辑 -->
+                <select id="project" name="project" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom"
+                        onchange="if(this.value) loadTasks(this.value)">
+                    <option value="">请选择项目</option>
+                    {% for project in projects %}
+                        <option value="{{ project }}" {% if project == selected_project %}selected{% endif %}>
+                            {{ project }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 任务选择 -->
+            <div class="form-group">
+                <label for="task" class="block text-gray-700 font-medium mb-2">
+                    <i class="fa fa-tasks text-primary mr-1"></i>任务名称 <span class="text-error">*</span>
+                </label>
+                <select id="task" name="task" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom">
+                    <option value="">请先选择项目</option>
+                </select>
+            </div>
+
+            <!-- SN码输入 -->
+            <div class="form-group">
+                <label for="sn" class="block text-gray-700 font-medium mb-2">
+                    <i class="fa fa-barcode text-primary mr-1"></i>SN码(厂家箱号) <span class="text-error">*</span>
+                </label>
+                <input type="text" id="sn" name="sn" required placeholder="请输入SN码或厂家箱号"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom">
+            </div>
+
+            <!-- 米标输入区域 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 初始米标 -->
+                <div class="form-group">
+                    <label for="initial_meter" class="block text-gray-700 font-medium mb-2">
+                        <i class="fa fa-arrow-up text-primary mr-1"></i>初始米标 <span class="text-error">*</span>
+                    </label>
+                    <input type="number" step="0.01" min="0" id="initial_meter" name="initial_meter" required placeholder="例如：100.50"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom">
+                </div>
+
+                <!-- 结束米标 -->
+                <div class="form-group">
+                    <label for="end_meter" class="block text-gray-700 font-medium mb-2">
+                        <i class="fa fa-arrow-down text-primary mr-1"></i>结束米标 <span class="text-error">*</span>
+                    </label>
+                    <input type="number" step="0.01" min="0" id="end_meter" name="end_meter" required placeholder="例如：250.75"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom">
+                </div>
+            </div>
+
+            <!-- 提交按钮 -->
+            <div class="pt-4">
+                <button type="submit"
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-lg transition-custom flex items-center justify-center">
+                    <i class="fa fa-calculator mr-2"></i>计算并保存
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 帮助信息卡片 -->
+    <div class="mt-8 bg-accent/20 rounded-xl p-6 card-shadow">
+        <h3 class="font-semibold text-secondary mb-3 flex items-center">
+            <i class="fa fa-info-circle mr-2"></i>使用说明
+        </h3>
+        <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+            <li>请先选择项目和对应的任务</li>
+            <li>输入SN码（厂家箱号）以标识光缆</li>
+            <li>输入初始米标和结束米标，系统将自动计算使用长度</li>
+            <li>使用长度 = 结束米标 - 初始米标</li>
+            <li>所有带 <span class="text-error">*</span> 的字段为必填项</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
